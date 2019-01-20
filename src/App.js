@@ -1,25 +1,40 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      randomImage: "https://i.imgflip.com/1ur9b0.jpg",
+      memes: []
+    };
+  }
+
+  componentDidMount() {
+    fetch("https://api.imgflip.com/get_memes")
+      .then(response => response.json())
+      .then(response => {
+        const { memes } = response.data;
+        this.setState({
+          memes: memes
+        });
+      })
+      .catch(error => console.log(error));
+  }
+
+  handleClick = () => {
+    const randomNumber = Math.floor(Math.random() * this.state.memes.length);
+    const randomImage = this.state.memes[randomNumber].url;
+    this.setState({
+      randomImage: randomImage
+    });
+  };
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <img src={this.state.randomImage} />
+        <button onClick={this.handleClick}>Generate</button>
       </div>
     );
   }
